@@ -245,3 +245,4 @@ ModelManifest.xml
 .fake/
 /stitched_filters_8x8.png
 /results
+/vgg16_weights.h5
