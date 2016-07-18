@@ -23,6 +23,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="conv_filter_visualization.py" />
+    <Compile Include="extract_style.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="KerasTest.py" />
     <Compile Include="mnist_cnn.py" />
     <Compile Include="mnist_irnn.py" />
