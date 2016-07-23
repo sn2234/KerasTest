@@ -97,3 +97,55 @@ def my_gramm_matrix(x):
     features = x.reshape((x.shape[0], x.shape[1]*x.shape[2]))
     gram = features @ features.T
     return gram
+
+img_width = 400
+img_height = 400
+
+# the "style loss" is designed to maintain
+# the style of the reference image in the generated image.
+# It is based on the gram matrices (which capture style) of
+# feature maps from the style reference image
+# and from the generated image
+def style_loss(style, combination):
+    assert K.ndim(style) == 3
+    assert K.ndim(combination) == 3
+    S = gram_matrix(style)
+    C = gram_matrix(combination)
+    channels = 3
+    size = img_width * img_height
+    return K.sum(K.square(S - C)) / (4. * (channels ** 2) * (size ** 2))
+
+def my_style_loss(style, combination):
+    S = my_gramm_matrix(style)
+    C = my_gramm_matrix(combination)
+    channels = 3
+    size = img_width * img_height
+    return np.sum(np.square(S - C)) / (4. * (channels ** 2) * (size ** 2))
+
+im1 = img.imresize(img.imread('cat.jpg'), (224, 224)).astype(np.float32)
+im1 = im1.transpose((2,0,1))
+im1 = np.expand_dims(im1, axis=0)
+
+im2 = img.imresize(img.imread('cat_xxx.jpg'), (224, 224)).astype(np.float32)
+im2 = im2.transpose((2,0,1))
+im2 = np.expand_dims(im2, axis=0)
+
+out = model.predict(im1)
+style_im1 = out[0, :, :, :]
+
+out = model.predict(im2)
+style_im2 = out[0, :, :, :]
+
+style_tensor_im1 = K.variable(style_im1)
+style_out_im1 = K.placeholder(style_im1.shape)
+
+style_tensor_im2 = K.variable(style_im2)
+style_out_im2 = K.placeholder(style_im2.shape)
+
+ls = style_loss(style_tensor_im1, style_tensor_im2)
+
+fn_loss = K.function([style_out_im1, style_out_im2], ls)
+
+xx = fn_loss([style_im1, style_im2])
+
+yy = my_style_loss(style_im1, style_im2)
