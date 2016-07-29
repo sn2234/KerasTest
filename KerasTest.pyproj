@@ -30,6 +30,7 @@
     <Compile Include="mnist_cnn.py" />
     <Compile Include="mnist_irnn.py" />
     <Compile Include="mnist_mlp.py" />
+    <Compile Include="mnist_siamese_graph.py" />
     <Compile Include="neural_style_transfer.py" />
     <Compile Include="vgg-16_keras.py">
       <SubType>Code</SubType>
